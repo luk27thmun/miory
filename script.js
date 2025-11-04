@@ -18,7 +18,7 @@ const posts = [
     } ,
     ,
     {
-        id: 'after read',
+        id: 'after-read',
         title: '人妻约会指南读后感',
         date: '2025-11-04',
         excerpt: '如题',
