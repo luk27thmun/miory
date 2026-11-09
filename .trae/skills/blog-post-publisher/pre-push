@@ -1,0 +1,36 @@
+#!/bin/sh
+# 博客推送守卫：本地 HEAD 落后或分叉于 origin/master 时拒绝推送，防止覆盖线上已发布内容。
+# 安装：cp .trae/skills/blog-post-publisher/pre-push .git/hooks/pre-push && chmod +x .git/hooks/pre-push
+
+remote="$1"
+url="$2"
+
+fail() {
+    echo ""
+    echo "✗ 推送被拒绝：本地提交不在 origin/master 的历史上（落后或已分叉）。"
+    echo "  线上内容比你本地的新，直接推送会覆盖/删除已发布文章。"
+    echo "  请先执行： git fetch origin && git reset --hard origin/master"
+    echo "  然后重新做本次改动再提交（不要使用 git push --force）。"
+    echo ""
+    exit 1
+}
+
+git fetch -q origin master 2>/dev/null
+
+if ! git merge-base --is-ancestor origin/master HEAD 2>/dev/null; then
+    fail
+fi
+
+while read -r local_ref local_sha remote_ref remote_sha; do
+    [ -z "$local_sha" ] && continue
+    case "$local_sha" in *[!0]*) ;; *) continue ;; esac
+    case "$remote_ref" in
+        refs/heads/master)
+            if ! git merge-base --is-ancestor origin/master "$local_sha" 2>/dev/null; then
+                fail
+            fi
+            ;;
+    esac
+done
+
+exit 0
