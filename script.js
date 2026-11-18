@@ -79,7 +79,10 @@ function renderHomePage() {
     const postListContainer = document.querySelector('.post-list');
     if (!postListContainer) return;
     
-    posts.forEach(post => {
+    // 按日期倒序排列文章
+    const sortedPosts = [...posts].sort((a, b) => new Date(b.date) - new Date(a.date));
+    
+    sortedPosts.forEach(post => {
         const postItem = document.createElement('div');
         postItem.className = 'post-item';
         postItem.innerHTML = `
@@ -99,8 +102,8 @@ function renderPostsPage() {
     const postListContainer = document.querySelector('.post-list');
     if (!postListContainer) return;
     
-    // 按日期倒序排列文章
-    const sortedPosts = [...posts].sort((a, b) => new Date(b.date) - new Date(a.date));
+    // 按日期正序排列文章
+    const sortedPosts = [...posts].sort((a, b) => new Date(a.date) - new Date(b.date));
     
     sortedPosts.forEach(post => {
         const postItem = document.createElement('div');
